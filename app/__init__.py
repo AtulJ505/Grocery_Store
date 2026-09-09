@@ -9,9 +9,12 @@ from .orders.routes import orders_bp
 from .payments.stripe_webhook import stripe_bp
 from .main.routes import main_bp
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__, static_folder="../static", template_folder="../app/templates")
     app.config.from_object(Config)
+
+    if config is not None:
+        app.config.update(config)
 
     # init extensions
     db.init_app(app)

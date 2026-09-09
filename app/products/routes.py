@@ -10,8 +10,13 @@ products_bp = Blueprint("products", __name__)
 @products_bp.route("/", methods=["GET"])
 def list_products():
     q = request.args.get("q", "")
-    page = int(request.args.get("page", 1))
-    per_page = int(request.args.get("per_page", 20))
+    try:
+        page = int(request.args.get("page", 1))
+        per_page = int(request.args.get("per_page", 20))
+    except ValueError:
+        return jsonify({"msg": "page and per_page must be integers"}), 400
+    if page < 1 or not 1 <= per_page <= 100:
+        return jsonify({"msg": "page must be positive and per_page must be between 1 and 100"}), 400
     query = Product.query
     if q:
         query = query.filter(Product.name.ilike(f"%{q}%"))
